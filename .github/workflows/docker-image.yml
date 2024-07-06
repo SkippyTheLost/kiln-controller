@@ -2,10 +2,10 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "blinka" ]
+    branches: [ "main" ]
     tags: [ 'v*.*.*' ] # Publish semver tags as releases.
   pull_request:
-    branches: [ "blinka" ]
+    branches: [ "main" ]
 
 env:
   REGISTRY: ghcr.io
