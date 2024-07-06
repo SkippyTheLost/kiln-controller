@@ -1,7 +1,8 @@
 import logging
 import os
-from digitalio import DigitalInOut
-import busio
+
+# from digitalio import DigitalInOut
+# import busio
 
 # Import ./storage/config.py if it exists
 try:
@@ -233,6 +234,7 @@ stop_integral_windup = True
 ########################################################################
 #
 #   Simulation parameters
+#
 simulate = get_config("simulate", "SIMULATE", bool) or True
 sim_t_env = get_config("sim_t_env", "SIM_T_ENV", float) or 65.0  # deg C
 sim_c_heat = (
@@ -257,7 +259,6 @@ sim_R_ho_air = (
     get_config("sim_R_ho_air", "SIM_R_HO_AIR", float) or 0.05
 )  # K/W  " with internal air circulation
 
-
 # if you want simulations to happen faster than real time, this can be
 # set as high as 1000 to speed simulations up by 1000 times.
 sim_speedup_factor = get_config("sim_speedup_factor", "SIM_SPEEDUP_FACTOR", int) or 1
@@ -269,8 +270,9 @@ sim_speedup_factor = get_config("sim_speedup_factor", "SIM_SPEEDUP_FACTOR", int)
 #
 # If you change the temp_scale, all settings in this file are assumed to
 # be in that scale.
+#
 temp_scale = (
-    get_config("temp_scale", "TEMP_SCALE", str) or "f"
+    get_config("temp_scale", "TEMP_SCALE", str) or "c"
 )  # c = Celsius | f = Fahrenheit - Unit to display
 time_scale_slope = (
     get_config("time_scale_slope", "TIME_SCALE_SLOPE", str) or "h"
@@ -285,7 +287,7 @@ time_scale_profile = (
 # means your kiln receives full power until your house burns down.
 # this should not replace you watching your kiln or use of a kiln-sitter
 emergency_shutoff_temp = (
-    get_config("emergency_shutoff_temp", "EMERGENCY_SHUTOFF_TEMP", int) or 2264
+    get_config("emergency_shutoff_temp", "EMERGENCY_SHUTOFF_TEMP", int) or 1300
 )  # cone 7
 
 # If the current temperature is outside the pid control window,
@@ -315,7 +317,7 @@ thermocouple_offset = get_config("thermocouple_offset", "THERMOCOUPLE_OFFSET", i
 
 # number of samples of temperature to take over each duty cycle.
 # The larger the number, the more load on the board. K type
-# thermocouples have a precision of about 1/2 degree C.
+# thermocouples have a precision of about +/- 2.2°C or +/- 0.75%, whichever is greater.
 # The median of these samples is used for the temperature.
 temperature_average_samples = (
     get_config("temperature_average_samples", "TEMPERATURE_AVERAGE_SAMPLES", int) or 10
@@ -337,6 +339,7 @@ ac_freq_50hz = get_config("ac_freq_50hz", "AC_FREQ_50HZ", bool) or False
 #
 # You should only set these to True if you experience a problem
 # and WANT to ignore it to complete a firing.
+#
 ignore_temp_too_high = (
     get_config("ignore_temp_too_high", "IGNORE_TEMP_TOO_HIGH", bool) or False
 )
