@@ -30,7 +30,7 @@ from ovenWatcher import OvenWatcher
 
 app = bottle.Bottle()
 
-if config.simulate == True:
+if config.simulate is True:
     log.info("this is a simulation")
     oven = SimulatedOven()
 else:
@@ -56,7 +56,6 @@ def handle_api():
 def handle_api():
     log.info("/api is alive")
 
-
     # run a kiln schedule
     if bottle.request.json['cmd'] == 'run':
         wanted = bottle.request.json['profile']
@@ -64,7 +63,7 @@ def handle_api():
 
         # start at a specific minute in the schedule
         # for restarting and skipping over early parts of a schedule
-        startat = 0;      
+        startat = 0
         if 'startat' in bottle.request.json:
             startat = bottle.request.json['startat']
 
@@ -191,7 +190,7 @@ def handle_storage():
 
             try:
                 msgdict = json.loads(message)
-            except:
+            except Exception:
                 msgdict = {}
 
             if message == "GET":
@@ -257,7 +256,7 @@ def handle_status():
 def get_profiles():
     try:
         profile_files = os.listdir(profile_path)
-    except:
+    except Exception:
         profile_files = []
     profiles = []
     for filename in profile_files:
@@ -292,7 +291,7 @@ def add_temp_units(profile):
     if config.temp_scale=="c":
         return profile
     if config.temp_scale=="f":
-        profile=convert_to_c(profile);
+        profile=convert_to_c(profile)
         return profile
 
 def convert_to_c(profile):
