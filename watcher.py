@@ -42,14 +42,14 @@ class Watcher(object):
         except requests.exceptions.ConnectionError:
             log.error("network connection error. check kiln_url and port.")
             return {}
-        except Exception: # FIXME Specify exception type
+        except Exception:  # FIXME Specify exception type
             return {}
 
     def send_alert(self, msg):
         log.error("sending alert: %s" % msg)
         try:
             r = requests.post(self.slack_hook_url, json={"text": msg})
-        except Exception: # FIXME Specify exception type
+        except Exception:  # FIXME Specify exception type
             pass
 
     def has_errors(self):
@@ -78,7 +78,7 @@ class Watcher(object):
                             self.stats["err"],
                         )
                     )
-                except Exception: # FIXME Specify exception type
+                except Exception:  # FIXME Specify exception type
                     pass
 
             if self.bad_checks >= self.bad_check_limit:

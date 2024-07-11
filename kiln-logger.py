@@ -66,7 +66,7 @@ def logger(hostname, csvfile, noprofilestats, pidstats, stdout):
         except websocket.WebSocketException:
             try:
                 status_ws.connect(f"ws://{hostname}/status")
-            except Exception: # FIXME Specify exception type
+            except Exception:  # FIXME Specify exception type
                 time.sleep(5)
 
             continue
