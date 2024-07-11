@@ -134,14 +134,6 @@
 # pid_ki = 80  # Integral
 # pid_kd = 220.83497910261562  # Derivative
 
-########################################################################
-#
-# Initial heating and Integral Windup
-#
-# this setting is deprecated and is no longer used. this happens by
-# default and is the expected behavior.
-
-# stop_integral_windup = True
 
 ########################################################################
 #
