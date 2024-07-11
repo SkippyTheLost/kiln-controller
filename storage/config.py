@@ -23,7 +23,7 @@
 
 # kwh_rate = 0.1319  # cost per kilowatt hour per currency_type to calculate cost to run job
 # kw_elements = 9.460  # if the kiln elements are on, the wattage in kilowatts
-# currency_type = "$"  # Currency Symbol to show when calculating cost to run job
+# currency_type = "$"  # Currency to use when calculating cost. $, £, €, or any ISO 4217 currency code
 
 ########################################################################
 #
@@ -97,7 +97,7 @@
 #   max31855 - only supports type K thermocouples
 #   max31856 - supports many thermocouples
 
-# adapter = "max31855"
+# thermocouple_adapter = "max31855"
 
 # Supported Thermocouple Types: B, E, J, K, N, R, S, T
 # thermocouple_type_id = K

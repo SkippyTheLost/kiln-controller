@@ -42,6 +42,7 @@ log_format = (
 listening_port = get_config("listening_port", "PORT", int) or 80
 
 ########################################################################
+#
 # Cost Information
 #
 # This is used to calculate a cost estimate before a run. It's also used
@@ -53,7 +54,7 @@ kw_elements = (
 )  # if the kiln elements are on, the wattage in kilowatts
 currency_type = (
     get_config("currency_type", "CURRENCY_TYPE", str) or "$"
-)  # Currency Symbol to show when calculating cost to run job
+)  # Currency to use when calculating cost. $, £, €, or any ISO 4217 currency code
 
 ########################################################################
 #
@@ -88,9 +89,8 @@ currency_type = (
 #    SPI0_MISO = BCM pin 9  = D0 on the adafruit-31855
 #
 # plus a GPIO output to connect to CS. You can use any GPIO pin you want.
-# I chose gpio pin 5:
 #
-#    GPIO5    = BCM pin 5   = CS on the adafruit-31855
+#    GPIO5     = BCM pin 5  = CS on the adafruit-31855
 #
 # Note that NO pins are configured in this file for hardware spi
 
@@ -147,37 +147,41 @@ except (NotImplementedError, AttributeError):
 #   max31856 - supports many thermocouples
 
 max31855 = get_config(
-    "max31855", "MAX31855", int
+    "max31855", "MAX31855", bool
 )  # For backwards compatibility of config
 max31856 = get_config(
-    "max31856", "MAX31856", int
+    "max31856", "MAX31856", bool
 )  # For backwards compatibility of config
 
-adapter = None
+thermocouple_adapter = None
 
-if max31855 == 1:
-    adapter = "MAX31855"
-elif max31856 == 1:
-    adapter = "MAX31856"
+if max31855:
+    thermocouple_adapter = "MAX31855"
+elif max31856:
+    thermocouple_adapter = "MAX31856"
 
-adapter = get_config("adapter", "THERMOCOUPLE_ADAPTER", str) or adapter or "MAX31855"
+thermocouple_adapter = (
+    get_config("thermocouple_adapter", "THERMOCOUPLE_ADAPTER", str)
+    or thermocouple_adapter
+    or "MAX31855"
+)
 
-if adapter is None and max31855 is None and max31856 is None:
+if thermocouple_adapter is None and not max31855 and not max31856:
     raise ValueError("No thermocouple adapter selected")
 
-adapter = adapter.upper()
+thermocouple_adapter = thermocouple_adapter.upper()
 
 thermocouple_type_id = (
     get_config("thermocouple_type_id", "THERMOCOUPLE_TYPE", str) or "K"
 )
 thermocouple_type_id = thermocouple_type_id.upper()
 
-if adapter == "MAX31855":
-    max31855 = 1
-    max31856 = 0
-elif adapter == "MAX31856":
-    max31855 = 0
-    max31856 = 1
+if thermocouple_adapter == "MAX31855":
+    max31855 = True
+    max31856 = False
+elif thermocouple_adapter == "MAX31856":
+    max31855 = False
+    max31856 = True
     import adafruit_max31856
 
     try:
@@ -192,7 +196,7 @@ elif adapter == "MAX31856":
         )
 
 else:
-    raise ValueError(f"Unknown thermocouple adapter: {adapter}")
+    raise ValueError(f"Unknown thermocouple adapter: {thermocouple_adapter}")
 
 ########################################################################
 #
@@ -254,7 +258,7 @@ sim_R_ho_air = (
 
 # if you want simulations to happen faster than real time, this can be
 # set as high as 1000 to speed simulations up by 1000 times.
-sim_speedup_factor = get_config("sim_speedup_factor", "SIM_SPEEDUP_FACTOR", int) or 1
+sim_speedup_factor = get_config("sim_speedup_factor", "SIM_SPEEDUP_FACTOR", int) or 100
 
 
 ########################################################################
@@ -320,8 +324,9 @@ temperature_average_samples = (
 ac_freq_50hz = get_config("ac_freq_50hz", "AC_FREQ_50HZ", bool) or False
 
 ########################################################################
+#
 # Emergencies - or maybe not
-########################################################################
+#
 # There are all kinds of emergencies that can happen including:
 # - temperature is too high (emergency_shutoff_temp exceeded)
 # - lost connection to thermocouple
@@ -385,8 +390,11 @@ ignore_tc_too_many_errors = (
 )
 
 ########################################################################
-# automatic restarts - if you have a power brown-out and the raspberry pi
-# reboots, this restarts your kiln where it left off in the firing profile.
+#
+# Automatic Restarts
+#
+# If you have a power brown-out and the raspberry pi reboots, this
+# restarts your kiln where it left off in the firing profile.
 # This only happens if power comes back before automatic_restart_window
 # is exceeded (in minutes). The kiln-controller.py process must start
 # automatically on boot-up for this to work.
@@ -405,6 +413,9 @@ automatic_restart_state_file = get_config(
 ) or os.path.abspath(os.path.join(os.path.dirname(__file__), "storage", "state.json"))
 
 ########################################################################
+#
+# Kiln Profiles
+#
 # load kiln profiles from this directory
 # created a repo where anyone can contribute profiles. The objective is
 # to load profiles from this repository by default.
@@ -416,12 +427,15 @@ kiln_profiles_directory = get_config(
 
 
 ########################################################################
-# low temperature throttling of elements
+#
+# Heating Element Throttling
+#
 # kiln elements have lots of power and tend to drastically overshoot
 # at low temperatures. When under the set point and outside the PID
 # control window and below throttle_below_temp, only throttle_percent
 # of the elements are used max.
 # To prevent throttling, set throttle_percent to 100.
+#
 throttle_below_temp = (
     get_config("throttle_below_temp", "THROTTLE_BELOW_TEMP", int) or 300
 )
