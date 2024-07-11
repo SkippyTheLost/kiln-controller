@@ -41,12 +41,6 @@ ovenWatcher = OvenWatcher(oven)
 # this ovenwatcher is used in the oven class for restarts
 oven.set_ovenwatcher(ovenWatcher)
 
-
-@app.route("/")
-def index():
-    return bottle.redirect("/picoreflow/index.html")
-
-
 @app.get("/api/stats")
 def handle_api_stats():
     log.info("/api/stats command received")
@@ -127,15 +121,6 @@ def find_profile(wanted):
         if profile["name"] == wanted:
             return profile
     return None
-
-
-@app.route("/picoreflow/:filename#.*#")
-def send_static(filename):
-    log.debug("serving %s" % filename)
-    return bottle.static_file(
-        filename,
-        root=os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "public"),
-    )
 
 
 def get_websocket_from_request():
