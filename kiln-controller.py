@@ -246,7 +246,9 @@ def handle_status():
     while True:
         try:
             message = wsock.receive()
-            wsock.send("Your message was: %r" % message)
+            if not message:
+                break
+            wsock.send(ovenWatcher.create_backlog())
         except WebSocketError:
             break
         time.sleep(1)

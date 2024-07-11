@@ -50,22 +50,8 @@ class OvenWatcher(threading.Thread):
         #we just turned on, add first state for nice graph
         self.last_log.append(self.oven.get_state())
 
-    def add_observer(self,observer):
-        if self.last_profile:
-            p = {
-                "name": self.last_profile.name,
-                "data": self.last_profile.data, 
-                "type" : "profile"
-            }
-        else:
-            p = None
-        
-        backlog = {
-            'type': "backlog",
-            'profile': p,
-            'log': self.lastlog_subset(),
-            #'started': self.started
-        }
+    def add_observer(self, observer):
+        backlog = self.create_backlog(1000)
         print(backlog)
         backlog_json = json.dumps(backlog)
         try:
@@ -89,3 +75,22 @@ class OvenWatcher(threading.Thread):
                     self.observers.remove(wsock)
             else:
                 self.observers.remove(wsock)
+
+    def create_backlog(self, maxpts=50):
+        if self.last_profile:
+            p = {
+                "name": self.last_profile.name,
+                "data": self.last_profile.data,
+                "type": "profile",
+            }
+        else:
+            p = None
+
+        backlog = {
+            "type": "backlog",
+            "profile": p,
+            "log": self.lastlog_subset(),
+            #'started': self.started
+        }
+
+        return backlog
