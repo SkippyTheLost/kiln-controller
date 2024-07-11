@@ -31,7 +31,7 @@ from ovenWatcher import OvenWatcher
 
 app = bottle.Bottle()
 
-if config.simulate is True:
+if config.simulate:
     log.info("this is a simulation")
     oven = SimulatedOven()
 else:
@@ -48,7 +48,7 @@ def index():
 
 
 @app.get("/api/stats")
-def handle_api():
+def handle_api_stats():
     log.info("/api/stats command received")
     if hasattr(oven, "pid"):
         if hasattr(oven.pid, "pidstats"):
@@ -198,7 +198,7 @@ def handle_storage():
 
             try:
                 msgdict = json.loads(message)
-            except Exception: # FIXME Specify exception type
+            except Exception:  # FIXME Specify exception type
                 msgdict = {}
 
             if message == "GET":
@@ -266,7 +266,7 @@ def handle_status():
 def get_profiles():
     try:
         profile_files = os.listdir(profile_path)
-    except Exception: # FIXME Specify exception type
+    except Exception:  # FIXME Specify exception type
         profile_files = []
     profiles = []
     for filename in profile_files:

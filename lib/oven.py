@@ -227,7 +227,7 @@ class ThermocoupleTracker(object):
         del self.status[0]
 
     def error_percent(self):
-        errors = sum(i is False for i in self.status)
+        errors = sum(not i for i in self.status)
         return (errors / self.size) * 100
 
     def over_error_limit(self):
@@ -270,45 +270,45 @@ class ThermocoupleError(Exception):
         super().__init__(self.message)
 
     def set_ignore(self):
-        if self.message == "not connected" and config.ignore_tc_lost_connection is True:
+        if self.message == "not connected" and config.ignore_tc_lost_connection:
             self.ignore = True
-        if self.message == "short circuit" and config.ignore_tc_short_errors is True:
+        if self.message == "short circuit" and config.ignore_tc_short_errors:
             self.ignore = True
-        if self.message == "unknown" and config.ignore_tc_unknown_error is True:
+        if self.message == "unknown" and config.ignore_tc_unknown_error:
             self.ignore = True
         if (
             self.message == "cold junction range fault"
-            and config.ignore_tc_cold_junction_range_error is True
+            and config.ignore_tc_cold_junction_range_error
         ):
             self.ignore = True
         if (
             self.message == "thermocouple range fault"
-            and config.ignore_tc_range_error is True
+            and config.ignore_tc_range_error
         ):
             self.ignore = True
         if (
             self.message == "cold junction temp too high"
-            and config.ignore_tc_cold_junction_temp_high is True
+            and config.ignore_tc_cold_junction_temp_high
         ):
             self.ignore = True
         if (
             self.message == "cold junction temp too low"
-            and config.ignore_tc_cold_junction_temp_low is True
+            and config.ignore_tc_cold_junction_temp_low
         ):
             self.ignore = True
         if (
             self.message == "thermocouple temp too high"
-            and config.ignore_tc_temp_high is True
+            and config.ignore_tc_temp_high
         ):
             self.ignore = True
         if (
             self.message == "thermocouple temp too low"
-            and config.ignore_tc_temp_low is True
+            and config.ignore_tc_temp_low
         ):
             self.ignore = True
         if (
             self.message == "voltage too high or low"
-            and config.ignore_tc_voltage_error is True
+            and config.ignore_tc_voltage_error
         ):
             self.ignore = True
 
@@ -363,7 +363,7 @@ class Max31856(TempSensorReal):
         self.thermocouple = adafruit_max31856.MAX31856(
             self.spi, self.cs, thermocouple_type=config.thermocouple_type
         )
-        if config.ac_freq_50hz is True:
+        if config.ac_freq_50hz:
             self.thermocouple.noise_rejection = 50
         else:
             self.thermocouple.noise_rejection = 60
@@ -469,7 +469,7 @@ class Oven(threading.Thread):
     def kiln_must_catch_up(self):
         """shift the whole schedule forward in time by one time_step
         to wait for the kiln to catch up"""
-        if config.kiln_must_catch_up is True:
+        if config.kiln_must_catch_up:
             temp = self.board.temp_sensor.temperature() + config.thermocouple_offset
             # kiln too cold, wait for it to heat up
             if self.target - temp > config.pid_control_window:
@@ -498,12 +498,12 @@ class Oven(threading.Thread):
             >= config.emergency_shutoff_temp
         ):
             log.info("emergency!!! temperature too high")
-            if config.ignore_temp_too_high is False:
+            if not config.ignore_temp_too_high:
                 self.abort_run()
 
         if self.board.temp_sensor.status.over_error_limit():
             log.info("emergency!!! too many errors in a short period")
-            if config.ignore_tc_too_many_errors is False:
+            if not config.ignore_tc_too_many_errors:
                 self.abort_run()
 
     def reset_if_schedule_ended(self):
@@ -565,13 +565,13 @@ class Oven(threading.Thread):
 
     def save_automatic_restart_state(self):
         # only save state if the feature is enabled
-        if config.automatic_restarts is False:
+        if not config.automatic_restarts:
             return False
         self.save_state()
 
     def should_i_automatic_restart(self):
         # only automatic restart if the feature is enabled
-        if config.automatic_restarts is False:
+        if not config.automatic_restarts:
             return False
         if self.state_file_is_old():
             duplog.info(
@@ -619,7 +619,7 @@ class Oven(threading.Thread):
         while True:
             log.debug("Oven running on " + threading.current_thread().name)
             if self.state == "IDLE":
-                if self.should_i_automatic_restart() is True:
+                if self.should_i_automatic_restart():
                     self.automatic_restart()
                 time.sleep(1)
                 continue
