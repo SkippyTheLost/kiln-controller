@@ -142,7 +142,7 @@ def get_websocket_from_request():
     env = bottle.request.environ
     wsock = env.get("wsgi.websocket")
     if not wsock:
-        abort(400, "Expected WebSocket request.")
+        os.abort(400, "Expected WebSocket request.")
     return wsock
 
 
@@ -239,6 +239,8 @@ def handle_config():
     while True:
         try:
             message = wsock.receive()
+            if not message:
+                break
             wsock.send(get_config())
         except WebSocketError:
             break
@@ -256,7 +258,8 @@ def handle_status():
             message = wsock.receive()
             if not message:
                 break
-            wsock.send(ovenWatcher.create_backlog())
+            backlog_json = json.dumps(ovenWatcher.create_backlog())
+            wsock.send(backlog_json)
         except WebSocketError:
             break
         time.sleep(1)

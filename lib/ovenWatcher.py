@@ -63,7 +63,7 @@ class OvenWatcher(threading.Thread):
         try:
             print(backlog_json)
             observer.send(backlog_json)
-        except Exception: # FIXME Specify exception type
+        except Exception:  # FIXME Specify exception type
             log.error("Could not send backlog to new observer")
 
         self.observers.append(observer)
@@ -76,7 +76,7 @@ class OvenWatcher(threading.Thread):
             if wsock:
                 try:
                     wsock.send(message_json)
-                except Exception: # FIXME Specify exception type
+                except Exception:  # FIXME Specify exception type
                     log.error("could not write to socket %s" % wsock)
                     self.observers.remove(wsock)
             else:
