@@ -458,9 +458,9 @@ class Oven(threading.Thread):
         log.info("Starting")
 
     def abort_run(self):
-        self.ovenwatcher.notify_all(self.ovenwatcher.create_backlog())
         self.reset()
         self.save_automatic_restart_state()
+        self.ovenwatcher.notify_all(self.ovenwatcher.create_backlog())
 
     def get_start_time(self):
         return datetime.datetime.now() - datetime.timedelta(
