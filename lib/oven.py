@@ -389,6 +389,7 @@ class Oven(threading.Thread):
         self.heat = 0
         self.heat_rate = 0
         self.heat_rate_temps = []
+        self.catch_up = False
         self.pid = PID(ki=config.pid_ki, kd=config.pid_kd, kp=config.pid_kp)
 
     @staticmethod
