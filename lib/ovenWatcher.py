@@ -55,6 +55,9 @@ class OvenWatcher(threading.Thread):
         self.recording = True
         # we just turned on, add first state for nice graph
         self.last_log.append(self.oven.get_state())
+        # Send a clear backlog to ensure frontend resets the previous graph
+        backlog = self.create_backlog(1000)
+        self.notify_all(backlog)
 
     def add_observer(self, observer):
         backlog = self.create_backlog(1000)
