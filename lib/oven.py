@@ -464,10 +464,15 @@ class Oven(threading.Thread):
             if self.target - temp > config.pid_control_window:
                 log.info("kiln must catch up, too cold, shifting schedule")
                 self.start_time = self.get_start_time()
+                self.catch_up = True
+                return
             # kiln too hot, wait for it to cool down
             if temp - self.target > config.pid_control_window:
                 log.info("kiln must catch up, too hot, shifting schedule")
                 self.start_time = self.get_start_time()
+                self.catch_up = True
+                return
+            self.catch_up = False
 
     def update_runtime(self):
 
@@ -529,6 +534,7 @@ class Oven(threading.Thread):
             "heat_rate": self.heat_rate,
             "totaltime": self.totaltime,
             "realtime": datetime.datetime.now().timestamp(),
+            "catch_up": self.catch_up,
             "kwh_rate": config.kwh_rate,
             "currency_type": config.currency_type,
             "profile": self.profile.name if self.profile else None,
