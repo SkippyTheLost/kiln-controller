@@ -528,7 +528,7 @@ class Oven(threading.Thread):
             "heat": self.heat,
             "heat_rate": self.heat_rate,
             "totaltime": self.totaltime,
-            "realtime": datetime.datetime.now(),
+            "realtime": datetime.datetime.now().timestamp(),
             "kwh_rate": config.kwh_rate,
             "currency_type": config.currency_type,
             "profile": self.profile.name if self.profile else None,
