@@ -458,7 +458,7 @@ class Oven(threading.Thread):
         log.info("Starting")
 
     def abort_run(self):
-        self.ovenwatcher.notify_all(json.dumps(self.ovenwatcher.create_backlog()))
+        self.ovenwatcher.notify_all(self.ovenwatcher.create_backlog())
         self.reset()
         self.save_automatic_restart_state()
 
