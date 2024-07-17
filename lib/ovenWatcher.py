@@ -96,7 +96,7 @@ class OvenWatcher(threading.Thread):
             "type": "backlog",
             "profile": p,
             "log": self.lastlog_subset(),
-            #'started': self.started
+            "started": self.started,
         }
 
         return backlog

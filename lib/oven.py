@@ -22,7 +22,6 @@ class DupFilter(object):
         self.msgs.add(record.msg)
         return rv
 
-
 class Duplogger:
     def __init__(self):
         self.log = logging.getLogger("%s.dupfree" % (__name__))
@@ -31,7 +30,6 @@ class Duplogger:
 
     def logref(self):
         return self.log
-
 
 duplog = Duplogger().logref()
 
@@ -281,10 +279,7 @@ class ThermocoupleError(Exception):
             and config.ignore_tc_cold_junction_range_error
         ):
             self.ignore = True
-        if (
-            self.message == "thermocouple range fault"
-            and config.ignore_tc_range_error
-        ):
+        if self.message == "thermocouple range fault" and config.ignore_tc_range_error:
             self.ignore = True
         if (
             self.message == "cold junction temp too high"
@@ -296,20 +291,11 @@ class ThermocoupleError(Exception):
             and config.ignore_tc_cold_junction_temp_low
         ):
             self.ignore = True
-        if (
-            self.message == "thermocouple temp too high"
-            and config.ignore_tc_temp_high
-        ):
+        if self.message == "thermocouple temp too high" and config.ignore_tc_temp_high:
             self.ignore = True
-        if (
-            self.message == "thermocouple temp too low"
-            and config.ignore_tc_temp_low
-        ):
+        if self.message == "thermocouple temp too low" and config.ignore_tc_temp_low:
             self.ignore = True
-        if (
-            self.message == "voltage too high or low"
-            and config.ignore_tc_voltage_error
-        ):
+        if self.message == "voltage too high or low" and config.ignore_tc_voltage_error:
             self.ignore = True
 
     def map_message(self):
@@ -460,10 +446,8 @@ class Oven(threading.Thread):
     def abort_run(self):
         self.reset()
         self.save_automatic_restart_state()
-        print("Abort run; Send backlog to all observers")
+        log.debug("Abort run; Send backlog to all observers")
         backlog = self.ovenwatcher.create_backlog()
-        backlog_json = json.dumps(backlog)
-        print(backlog_json)
         self.ovenwatcher.notify_all(backlog)
 
     def get_start_time(self):
@@ -544,6 +528,7 @@ class Oven(threading.Thread):
             "heat": self.heat,
             "heat_rate": self.heat_rate,
             "totaltime": self.totaltime,
+            "realtime": datetime.datetime.now(),
             "kwh_rate": config.kwh_rate,
             "currency_type": config.currency_type,
             "profile": self.profile.name if self.profile else None,
