@@ -460,7 +460,11 @@ class Oven(threading.Thread):
     def abort_run(self):
         self.reset()
         self.save_automatic_restart_state()
-        self.ovenwatcher.notify_all(self.ovenwatcher.create_backlog())
+        print("Abort run; Send backlog to all observers")
+        backlog = self.ovenwatcher.create_backlog()
+        backlog_json = json.dumps(backlog)
+        print(backlog_json)
+        self.ovenwatcher.notify_all(backlog)
 
     def get_start_time(self):
         return datetime.datetime.now() - datetime.timedelta(
