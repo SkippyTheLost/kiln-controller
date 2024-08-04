@@ -4,13 +4,14 @@ import os
 # from digitalio import DigitalInOut
 # import busio
 
-# Import ./storage/config.py if it exists
+# Import ./storage/config.yaml if it exists
 try:
-    import storage.config as UserConfig
-except ImportError:
+    import yaml
+    with open(os.path.join(os.path.dirname(__file__), "storage", "config.yaml"), 'r') as stream:
+        UserConfig = yaml.safe_load(stream)
+except FileNotFoundError:
     print("Failed to import user config")
     UserConfig = None
-
 
 def get_config(key, env=None, type=str):
     if env is None:

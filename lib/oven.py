@@ -22,6 +22,7 @@ class DupFilter(object):
         self.msgs.add(record.msg)
         return rv
 
+
 class Duplogger:
     def __init__(self):
         self.log = logging.getLogger("%s.dupfree" % (__name__))
@@ -30,6 +31,7 @@ class Duplogger:
 
     def logref(self):
         return self.log
+
 
 duplog = Duplogger().logref()
 
