@@ -5,7 +5,7 @@ gevent
 gevent-websocket
 websocket-client
 requests
-yaml
+pyyaml
 
 # for folks running raspberry pis
 # we have no proof of anyone using another board yet, but when that 
