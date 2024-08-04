@@ -393,6 +393,7 @@ class Oven(threading.Thread):
         self.heat_rate_temps = []
         self.catch_up = False
         self.pid = PID(ki=config.pid_ki, kd=config.pid_kd, kp=config.pid_kp)
+        self.catching_up = False
 
     @staticmethod
     def get_start_from_temperature(profile, temp):
